@@ -16,6 +16,7 @@ import ReceiptsPage from "./pages/admin/ReceiptsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import ProfilePage from "./pages/admin/ProfilePage";
 import NotFound from "./pages/NotFound";
+import TrackOrderPage from "./pages/TrackOrderPage";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/contact" element={<StoreContactPage />} />
+            <Route path="/track" element={<TrackOrderPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/admin" element={<DashboardPage />} />
             <Route path="/admin/products" element={<ProductsPage />} />
