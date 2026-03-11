@@ -67,34 +67,73 @@ export type Database = {
       }
       orders: {
         Row: {
+          alt_contact_name: string | null
+          alt_contact_phone: string | null
           created_at: string
           customer_email: string
           customer_name: string
           customer_phone: string | null
+          delivery_address: string | null
+          delivery_city: string | null
+          delivery_country: string | null
+          delivery_instructions: string | null
+          delivery_state: string | null
+          delivery_zip: string | null
           id: string
           items: Json
+          latitude: number | null
+          longitude: number | null
+          payment_method: string | null
           status: string
           total_amount: number
+          tracking_number: string | null
+          tracking_status: string | null
         }
         Insert: {
+          alt_contact_name?: string | null
+          alt_contact_phone?: string | null
           created_at?: string
           customer_email: string
           customer_name: string
           customer_phone?: string | null
+          delivery_address?: string | null
+          delivery_city?: string | null
+          delivery_country?: string | null
+          delivery_instructions?: string | null
+          delivery_state?: string | null
+          delivery_zip?: string | null
           id?: string
           items?: Json
+          latitude?: number | null
+          longitude?: number | null
+          payment_method?: string | null
           status?: string
           total_amount?: number
+          tracking_number?: string | null
+          tracking_status?: string | null
         }
         Update: {
+          alt_contact_name?: string | null
+          alt_contact_phone?: string | null
           created_at?: string
           customer_email?: string
           customer_name?: string
           customer_phone?: string | null
+          delivery_address?: string | null
+          delivery_city?: string | null
+          delivery_country?: string | null
+          delivery_instructions?: string | null
+          delivery_state?: string | null
+          delivery_zip?: string | null
           id?: string
           items?: Json
+          latitude?: number | null
+          longitude?: number | null
+          payment_method?: string | null
           status?: string
           total_amount?: number
+          tracking_number?: string | null
+          tracking_status?: string | null
         }
         Relationships: []
       }
