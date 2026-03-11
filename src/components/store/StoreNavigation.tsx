@@ -14,6 +14,7 @@ const StoreNavigation = () => {
   const navItems = [
     { name: "Home", href: "/" },
     { name: "Shop", href: "/shop" },
+    { name: "Track Order", href: "/track" },
     { name: "Contact", href: "/contact" },
   ];
 
