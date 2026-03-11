@@ -17,6 +17,7 @@ import SettingsPage from "./pages/admin/SettingsPage";
 import ProfilePage from "./pages/admin/ProfilePage";
 import NotFound from "./pages/NotFound";
 import TrackOrderPage from "./pages/TrackOrderPage";
+import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
