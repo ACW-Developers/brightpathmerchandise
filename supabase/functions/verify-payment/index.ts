@@ -33,54 +33,39 @@ serve(async (req) => {
       });
     }
 
-    const metadata = session.metadata || {};
-    const orderData = metadata.order_data ? JSON.parse(metadata.order_data) : {};
+    const orderId = session.metadata?.order_id;
+    if (!orderId) throw new Error("No order_id in session metadata");
 
-    const trackingNum = `TRK-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    const receiptNum = `RCP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    // Update order status to confirmed
+    const { data: order, error: updateError } = await supabase
+      .from("orders")
+      .update({ status: "confirmed", tracking_status: "confirmed" })
+      .eq("id", orderId)
+      .select()
+      .single();
 
-    // Create order
-    const { data: order, error: orderError } = await supabase.from("orders").insert({
-      customer_name: metadata.customer_name || session.customer_email,
-      customer_email: session.customer_email,
-      customer_phone: orderData.phone || null,
-      items: orderData.items || [],
-      total_amount: (session.amount_total || 0) / 100,
-      delivery_address: orderData.address || null,
-      delivery_city: orderData.city || null,
-      delivery_state: orderData.state || null,
-      delivery_zip: orderData.zip || null,
-      delivery_country: orderData.country || "US",
-      delivery_instructions: orderData.deliveryInstructions || null,
-      alt_contact_name: orderData.altContactName || null,
-      alt_contact_phone: orderData.altContactPhone || null,
-      payment_method: "stripe_card",
-      tracking_status: "pending",
-      tracking_number: trackingNum,
-      latitude: orderData.latitude || null,
-      longitude: orderData.longitude || null,
-    }).select().single();
-
-    if (orderError) throw orderError;
+    if (updateError) throw updateError;
 
     // Create receipt
+    const receiptNum = `RCP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+
     await supabase.from("receipts").insert({
       receipt_number: receiptNum,
       order_id: order.id,
-      customer_name: metadata.customer_name || session.customer_email,
-      customer_email: session.customer_email,
-      customer_phone: orderData.phone || null,
-      items: orderData.items || [],
-      subtotal: (session.amount_total || 0) / 100,
+      customer_name: order.customer_name,
+      customer_email: order.customer_email,
+      customer_phone: order.customer_phone,
+      items: order.items,
+      subtotal: order.total_amount,
       tax: 0,
-      total_amount: (session.amount_total || 0) / 100,
+      total_amount: order.total_amount,
       payment_method: "stripe_card",
       payment_status: "paid",
     });
 
     return new Response(JSON.stringify({
       success: true,
-      tracking_number: trackingNum,
+      tracking_number: order.tracking_number,
       receipt_number: receiptNum,
       order_id: order.id,
     }), {
