@@ -1,0 +1,37 @@
+{
+  "name": "BrightPath Technologies",
+  "short_name": "BrightPath",
+  "description": "Transforming Ideas into Digital Success - Innovative digital solutions including website development, custom software, mobile apps, and IT consulting",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0F1E",
+  "theme_color": "#0EA5E9",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "technology", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Our Services",
+      "url": "/#services",
+      "description": "View our digital services"
+    },
+    {
+      "name": "Contact Us",
+      "url": "/#contact",
+      "description": "Get in touch with our team"
+    }
+  ]
+}
