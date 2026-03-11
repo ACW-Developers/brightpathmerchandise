@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Check, Printer, ArrowLeft, Building2, MapPin, Phone, User, Copy } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Check, Printer, ArrowLeft, MapPin, Phone, User, Copy, Banknote } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -18,8 +18,6 @@ const BANK_DETAILS = {
   accountName: "BrightPath Merchandise LLC",
   accountNumber: "****4521",
   routingNumber: "021000021",
-  zelle: "amosclinton196@gmail.com",
-  cashapp: "$BrightPathMerch",
 };
 
 const CartDrawer = () => {
@@ -36,7 +34,80 @@ const CartDrawer = () => {
   const { items, updateQuantity, removeItem, clearCart, totalItems, totalPrice } = useCartStore();
   const printRef = useRef<HTMLDivElement>(null);
 
-  const handleOrder = async (method: string) => {
+  const geocodeAddress = async () => {
+    try {
+      const fullAddress = `${form.address}, ${form.city}, ${form.state} ${form.zip}, ${form.country}`;
+      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1`);
+      const geoData = await geoRes.json();
+      if (geoData.length > 0) {
+        return { lat: parseFloat(geoData[0].lat), lng: parseFloat(geoData[0].lon) };
+      }
+    } catch {}
+    return { lat: null, lng: null };
+  };
+
+  const handleStripeCheckout = async () => {
+    if (!form.name || !form.email) {
+      toast({ title: "Missing info", description: "Please fill in your name and email.", variant: "destructive" });
+      return;
+    }
+    if (!form.address || !form.city) {
+      toast({ title: "Missing delivery info", description: "Please fill in your delivery address.", variant: "destructive" });
+      return;
+    }
+    setIsOrdering(true);
+    try {
+      const orderItems = items.map(i => ({
+        product_id: i.product.id,
+        name: i.product.name,
+        price: i.product.is_on_sale && i.product.sale_price ? i.product.sale_price : i.product.price,
+        quantity: i.quantity,
+      }));
+
+      const { lat, lng } = await geocodeAddress();
+
+      // Store order metadata in sessionStorage for the success page
+      const orderMetadata = {
+        phone: form.phone,
+        address: form.address,
+        city: form.city,
+        state: form.state,
+        zip: form.zip,
+        country: form.country,
+        deliveryInstructions: form.deliveryInstructions,
+        altContactName: form.altContactName,
+        altContactPhone: form.altContactPhone,
+        items: orderItems,
+        latitude: lat,
+        longitude: lng,
+      };
+
+      sessionStorage.setItem("checkout_metadata", JSON.stringify(orderMetadata));
+
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: {
+          items: orderItems,
+          customer_email: form.email,
+          customer_name: form.name,
+          order_metadata: orderMetadata,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast({ title: "Checkout failed", description: err.message || "Something went wrong.", variant: "destructive" });
+    } finally {
+      setIsOrdering(false);
+    }
+  };
+
+  const handleManualPayOrder = async () => {
     if (!form.name || !form.email) {
       toast({ title: "Missing info", description: "Please fill in your name and email.", variant: "destructive" });
       return;
@@ -58,20 +129,8 @@ const CartDrawer = () => {
       const receiptNum = `RCP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
       const trackingNum = `TRK-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 
-      // Geocode address
-      let lat: number | null = null;
-      let lng: number | null = null;
-      try {
-        const fullAddress = `${form.address}, ${form.city}, ${form.state} ${form.zip}, ${form.country}`;
-        const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1`);
-        const geoData = await geoRes.json();
-        if (geoData.length > 0) {
-          lat = parseFloat(geoData[0].lat);
-          lng = parseFloat(geoData[0].lon);
-        }
-      } catch {}
+      const { lat, lng } = await geocodeAddress();
 
-      // Create order
       const { data: order, error: orderError } = await supabase.from("orders").insert({
         customer_name: form.name,
         customer_email: form.email,
@@ -86,7 +145,7 @@ const CartDrawer = () => {
         delivery_instructions: form.deliveryInstructions || null,
         alt_contact_name: form.altContactName || null,
         alt_contact_phone: form.altContactPhone || null,
-        payment_method: method,
+        payment_method: "bank_transfer",
         tracking_status: "pending" as any,
         tracking_number: trackingNum,
         latitude: lat,
@@ -95,7 +154,6 @@ const CartDrawer = () => {
 
       if (orderError) throw orderError;
 
-      // Create receipt
       await supabase.from("receipts").insert({
         receipt_number: receiptNum,
         order_id: (order as any).id,
@@ -106,7 +164,7 @@ const CartDrawer = () => {
         subtotal: total,
         tax: 0,
         total_amount: total,
-        payment_method: method,
+        payment_method: "bank_transfer",
         payment_status: "pending",
       });
 
@@ -115,13 +173,13 @@ const CartDrawer = () => {
         tracking_number: trackingNum,
         items: orderItems,
         total,
-        method,
+        method: "Bank Transfer (Pending)",
         date: new Date().toLocaleString(),
       });
 
       clearCart();
       setStep("confirmation");
-      toast({ title: "Order placed!" });
+      toast({ title: "Order placed! Admin has been notified." });
     } catch (err) {
       console.error(err);
       toast({ title: "Order failed", description: "Something went wrong.", variant: "destructive" });
@@ -358,49 +416,67 @@ const CartDrawer = () => {
                 </div>
               </div>
 
-              <p className="text-sm font-semibold mb-1">Pay with Zelle or CashApp</p>
-              <p className="text-xs text-muted-foreground mb-3">Send payment to the details below, then click "I've Paid" to confirm your order.</p>
-
-              <div className="glass-card p-4 space-y-3 text-sm">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Zelle</p>
-                    <p className="font-medium">{BANK_DETAILS.zelle}</p>
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(BANK_DETAILS.zelle)}>
-                    <Copy className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-                <div className="border-t border-border" />
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-xs text-muted-foreground">CashApp</p>
-                    <p className="font-medium">{BANK_DETAILS.cashapp}</p>
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(BANK_DETAILS.cashapp)}>
-                    <Copy className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-                <div className="border-t border-border" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Amount to Send</p>
-                  <p className="font-bold text-primary text-lg">${totalPrice().toFixed(2)}</p>
-                </div>
-              </div>
-
-              <Button onClick={() => handleOrder("zelle_cashapp")} disabled={isOrdering} className="w-full gap-2 h-12" size="lg">
-                {isOrdering ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-5 h-5" />}
-                I've Paid — Place Order
+              {/* Stripe Card Payment */}
+              <Button onClick={handleStripeCheckout} disabled={isOrdering} className="w-full gap-2 h-12" size="lg">
+                {isOrdering ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-5 h-5" />}
+                Pay with Card — ${totalPrice().toFixed(2)}
               </Button>
 
               <div className="relative my-2">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-                <div className="relative flex justify-center text-xs"><span className="bg-background px-2 text-muted-foreground">or pay later</span></div>
+                <div className="relative flex justify-center text-xs"><span className="bg-background px-2 text-muted-foreground">or pay manually</span></div>
               </div>
 
-              <Button variant="outline" onClick={() => handleOrder("pay_on_delivery")} disabled={isOrdering} className="w-full gap-2 h-12" size="lg">
-                {isOrdering ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-5 h-5" />}
-                Pay on Delivery
+              {/* Manual Bank Transfer */}
+              <div className="glass-card p-4 space-y-3 text-sm">
+                <p className="font-semibold text-sm flex items-center gap-2">
+                  <Banknote className="w-4 h-4" /> Bank Transfer Details
+                </p>
+                <p className="text-xs text-muted-foreground">Transfer the amount below and click "I've Paid" to place your order. Admin will verify and process.</p>
+                <div className="space-y-2 mt-2">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Bank</p>
+                      <p className="font-medium">{BANK_DETAILS.bankName}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Account Name</p>
+                      <p className="font-medium">{BANK_DETAILS.accountName}</p>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(BANK_DETAILS.accountName)}>
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Account Number</p>
+                      <p className="font-medium">{BANK_DETAILS.accountNumber}</p>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(BANK_DETAILS.accountNumber)}>
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Routing Number</p>
+                      <p className="font-medium">{BANK_DETAILS.routingNumber}</p>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(BANK_DETAILS.routingNumber)}>
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                  <div className="border-t border-border pt-2">
+                    <p className="text-xs text-muted-foreground">Amount to Send</p>
+                    <p className="font-bold text-primary text-lg">${totalPrice().toFixed(2)}</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button variant="outline" onClick={handleManualPayOrder} disabled={isOrdering} className="w-full gap-2 h-12" size="lg">
+                {isOrdering ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-5 h-5" />}
+                I've Paid — Place Order
               </Button>
 
               <Button variant="ghost" onClick={() => setStep("delivery")} className="w-full gap-1 mt-2">
@@ -420,7 +496,6 @@ const CartDrawer = () => {
                 <p className="text-sm text-muted-foreground">Receipt: {receiptData.receipt_number}</p>
               </div>
 
-              {/* Tracking info */}
               <div className="glass-card p-4 text-center">
                 <p className="text-xs text-muted-foreground mb-1">Your Tracking Number</p>
                 <div className="flex items-center justify-center gap-2">
@@ -432,7 +507,6 @@ const CartDrawer = () => {
                 <p className="text-xs text-muted-foreground mt-2">Use this to track your order at <span className="text-primary">/track</span></p>
               </div>
 
-              {/* Receipt preview */}
               <div className="glass-card p-4 text-sm" ref={printRef}>
                 <div style={{ textAlign: "center", marginBottom: 12 }}>
                   <img src={logo} alt="Logo" style={{ height: 32, marginBottom: 6, margin: "0 auto", display: "block" }} />
