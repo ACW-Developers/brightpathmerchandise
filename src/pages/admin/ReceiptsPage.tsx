@@ -131,7 +131,10 @@ const ReceiptsPage = () => {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="icon" onClick={() => setViewReceipt(r)}><Eye className="w-4 h-4" /></Button>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => setViewReceipt(r)}><Eye className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={handlePrint}><Printer className="w-4 h-4" /></Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

@@ -115,9 +115,17 @@ const OrdersPage = () => {
                   </Select>
                 </TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setSelectedOrder(o)}>
-                    <Eye className="w-4 h-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setSelectedOrder(o)}>
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => {
+                      navigator.clipboard.writeText(o.tracking_number || o.id);
+                      toast({ title: "Tracking # copied" });
+                    }}>
+                      <Package className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
