@@ -261,8 +261,10 @@ const CartDrawer = () => {
               ) : (
                 <>
                   <div className="flex-1 overflow-y-auto space-y-3 pr-2">
-                    {items.map((item) => (
-                      <div key={item.product.id} className="flex gap-3 p-3 rounded-xl bg-muted/20">
+                    {items.map((item) => {
+                      const cartKey = `${item.product.id}|${item.selectedColor || ''}|${item.selectedSize || ''}`;
+                      return (
+                      <div key={cartKey} className="flex gap-3 p-3 rounded-xl bg-muted/20">
                         <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                           {item.product.image_url ? (
                             <img src={item.product.image_url} alt={item.product.name} className="w-full h-full object-cover" />
@@ -272,24 +274,37 @@ const CartDrawer = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-sm truncate">{item.product.name}</h4>
+                          {(item.selectedColor || item.selectedSize) && (
+                            <div className="flex items-center gap-2 mt-0.5">
+                              {item.selectedColor && (
+                                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                  <span className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: item.selectedColor }} />
+                                </span>
+                              )}
+                              {item.selectedSize && (
+                                <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded">{item.selectedSize}</span>
+                              )}
+                            </div>
+                          )}
                           <p className="text-sm text-primary font-semibold">
                             ${((item.product.is_on_sale && item.product.sale_price ? item.product.sale_price : item.product.price) * item.quantity).toFixed(2)}
                           </p>
                           <div className="flex items-center gap-2 mt-1">
-                            <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.product.id, item.quantity - 1)}>
+                            <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.selectedColor, item.selectedSize)}>
                               <Minus className="h-3 w-3" />
                             </Button>
                             <span className="text-sm w-6 text-center">{item.quantity}</span>
-                            <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.product.id, item.quantity + 1)}>
+                            <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.selectedColor, item.selectedSize)}>
                               <Plus className="h-3 w-3" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto" onClick={() => removeItem(item.product.id)}>
+                            <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto" onClick={() => removeItem(item.product.id, item.selectedColor, item.selectedSize)}>
                               <Trash2 className="h-3 w-3 text-destructive" />
                             </Button>
                           </div>
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                   <div className="flex-shrink-0 pt-4 border-t border-border space-y-3">
                     <div className="flex justify-between">
