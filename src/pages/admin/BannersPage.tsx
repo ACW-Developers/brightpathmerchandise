@@ -15,12 +15,12 @@ import { Plus, Pencil, Trash2, Loader2, Upload, ImageIcon, Info } from "lucide-r
 import type { MarketingBanner } from "@/types/product";
 
 const POSITIONS = [
-  { value: "hero", label: "Home Hero", hint: "1200×500 — Full-width banner at top of homepage" },
-  { value: "home-mid", label: "Home Middle", hint: "1200×400 — Between featured & sale sections" },
-  { value: "home-bottom", label: "Home Bottom", hint: "1200×300 — Above the footer on homepage" },
-  { value: "shop-top", label: "Shop Top", hint: "1200×300 — Top of shop page" },
-  { value: "shop-mid", label: "Shop Mid", hint: "1200×250 — Between product rows" },
-  { value: "shop-bottom", label: "Shop Bottom", hint: "1200×300 — Bottom of shop page" },
+  { value: "hero", label: "Home Hero", hint: "1200×150 — Full-width banner at top of homepage" },
+  { value: "home-mid", label: "Home Middle", hint: "1200×130 — Between featured & sale sections" },
+  { value: "home-bottom", label: "Home Bottom", hint: "1200×120 — Above the footer on homepage" },
+  { value: "shop-top", label: "Shop Top", hint: "1200×120 — Top of shop page" },
+  { value: "shop-mid", label: "Shop Mid", hint: "1200×110 — Between product rows" },
+  { value: "shop-bottom", label: "Shop Bottom", hint: "1200×120 — Bottom of shop page" },
   { value: "sidebar", label: "Sidebar", hint: "300×600 — Vertical sidebar ad" },
 ];
 

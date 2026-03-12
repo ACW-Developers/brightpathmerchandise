@@ -107,6 +107,7 @@ const ReceiptsPage = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Receipt #</TableHead>
+              <TableHead>Order #</TableHead>
               <TableHead>Customer</TableHead>
               <TableHead className="hidden md:table-cell">Date</TableHead>
               <TableHead>Amount</TableHead>
@@ -116,10 +117,11 @@ const ReceiptsPage = () => {
           </TableHeader>
           <TableBody>
             {receipts.length === 0 ? (
-              <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No receipts yet.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No receipts yet.</TableCell></TableRow>
             ) : receipts.map(r => (
               <TableRow key={r.id}>
                 <TableCell className="font-mono text-sm">{r.receipt_number}</TableCell>
+                <TableCell className="font-mono text-xs text-muted-foreground">{(r as any).order_id ? (r as any).order_id.slice(0, 8).toUpperCase() : "—"}</TableCell>
                 <TableCell className="font-medium">{r.customer_name}</TableCell>
                 <TableCell className="hidden md:table-cell text-sm">{new Date(r.created_at).toLocaleDateString()}</TableCell>
                 <TableCell className="font-semibold">${Number(r.total_amount).toFixed(2)}</TableCell>
@@ -129,7 +131,10 @@ const ReceiptsPage = () => {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="icon" onClick={() => setViewReceipt(r)}><Eye className="w-4 h-4" /></Button>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => setViewReceipt(r)}><Eye className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={handlePrint}><Printer className="w-4 h-4" /></Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

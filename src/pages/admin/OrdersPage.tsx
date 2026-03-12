@@ -73,6 +73,7 @@ const OrdersPage = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Order #</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Customer</TableHead>
               <TableHead className="hidden md:table-cell">Email</TableHead>
@@ -85,9 +86,10 @@ const OrdersPage = () => {
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
-              <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">No orders yet.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">No orders yet.</TableCell></TableRow>
             ) : orders.map(o => (
               <TableRow key={o.id}>
+                <TableCell className="font-mono text-xs">{o.tracking_number || o.id.slice(0, 8).toUpperCase()}</TableCell>
                 <TableCell className="text-sm">{new Date(o.created_at).toLocaleDateString()}</TableCell>
                 <TableCell className="font-medium">{o.customer_name}</TableCell>
                 <TableCell className="hidden md:table-cell text-sm">{o.customer_email}</TableCell>
@@ -113,9 +115,17 @@ const OrdersPage = () => {
                   </Select>
                 </TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setSelectedOrder(o)}>
-                    <Eye className="w-4 h-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setSelectedOrder(o)}>
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => {
+                      navigator.clipboard.writeText(o.tracking_number || o.id);
+                      toast({ title: "Tracking # copied" });
+                    }}>
+                      <Package className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
