@@ -107,6 +107,7 @@ const ReceiptsPage = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Receipt #</TableHead>
+              <TableHead>Order #</TableHead>
               <TableHead>Customer</TableHead>
               <TableHead className="hidden md:table-cell">Date</TableHead>
               <TableHead>Amount</TableHead>
