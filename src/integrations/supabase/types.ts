@@ -65,6 +65,42 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_banners: {
+        Row: {
+          created_at: string
+          dimensions_hint: string | null
+          display_order: number | null
+          id: string
+          image_url: string
+          is_active: boolean | null
+          link_url: string | null
+          position: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          dimensions_hint?: string | null
+          display_order?: number | null
+          id?: string
+          image_url: string
+          is_active?: boolean | null
+          link_url?: string | null
+          position?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          dimensions_hint?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string
+          is_active?: boolean | null
+          link_url?: string | null
+          position?: string
+          title?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           alt_contact_name: string | null
@@ -222,7 +258,9 @@ export type Database = {
       }
       products: {
         Row: {
+          brand: string | null
           category: string | null
+          colors: Json | null
           created_at: string
           description: string | null
           id: string
@@ -232,11 +270,14 @@ export type Database = {
           name: string
           price: number
           sale_price: number | null
+          sizes: Json | null
           stock_quantity: number | null
           updated_at: string
         }
         Insert: {
+          brand?: string | null
           category?: string | null
+          colors?: Json | null
           created_at?: string
           description?: string | null
           id?: string
@@ -246,11 +287,14 @@ export type Database = {
           name: string
           price?: number
           sale_price?: number | null
+          sizes?: Json | null
           stock_quantity?: number | null
           updated_at?: string
         }
         Update: {
+          brand?: string | null
           category?: string | null
+          colors?: Json | null
           created_at?: string
           description?: string | null
           id?: string
@@ -260,6 +304,7 @@ export type Database = {
           name?: string
           price?: number
           sale_price?: number | null
+          sizes?: Json | null
           stock_quantity?: number | null
           updated_at?: string
         }
