@@ -203,7 +203,11 @@ const OrdersPage = () => {
                 <div className="space-y-2">
                   {Array.isArray(selectedOrder.items) && (selectedOrder.items as any[]).map((item: any, i: number) => (
                     <div key={i} className="flex justify-between text-sm">
-                      <span>{item.name} × {item.quantity}</span>
+                      <div>
+                        <span>{item.name} × {item.quantity}</span>
+                        {item.color && <span className="inline-flex items-center gap-1 ml-2 text-xs text-muted-foreground"><span className="w-3 h-3 rounded-full border border-white/20 inline-block" style={{ backgroundColor: item.color }} /></span>}
+                        {item.size && <span className="text-xs text-muted-foreground ml-1 bg-muted px-1.5 py-0.5 rounded">{item.size}</span>}
+                      </div>
                       <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
