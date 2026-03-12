@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard, Package, ShoppingCart, FileText, Receipt, Settings,
-  User, LogOut, Menu, X, ChevronLeft,
+  User, LogOut, Menu, X, ChevronLeft, Image,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo/logo.png";
@@ -12,6 +12,7 @@ const menuItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
   { label: "Products", icon: Package, path: "/admin/products" },
   { label: "Orders", icon: ShoppingCart, path: "/admin/orders" },
+  { label: "Banners", icon: Image, path: "/admin/banners" },
   { label: "Invoices", icon: FileText, path: "/admin/invoices" },
   { label: "Receipts", icon: Receipt, path: "/admin/receipts" },
   { label: "Settings", icon: Settings, path: "/admin/settings" },

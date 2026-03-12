@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import ProductsPage from "./pages/admin/ProductsPage";
 import OrdersPage from "./pages/admin/OrdersPage";
+import BannersPage from "./pages/admin/BannersPage";
 import InvoicesPage from "./pages/admin/InvoicesPage";
 import ReceiptsPage from "./pages/admin/ReceiptsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
@@ -41,6 +42,7 @@ const App = () => {
             <Route path="/admin" element={<DashboardPage />} />
             <Route path="/admin/products" element={<ProductsPage />} />
             <Route path="/admin/orders" element={<OrdersPage />} />
+            <Route path="/admin/banners" element={<BannersPage />} />
             <Route path="/admin/invoices" element={<InvoicesPage />} />
             <Route path="/admin/receipts" element={<ReceiptsPage />} />
             <Route path="/admin/settings" element={<SettingsPage />} />

@@ -4,6 +4,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { Link } from "react-router-dom";
 import type { Product } from "@/types/product";
 import { toast } from "@/hooks/use-toast";
+import { AverageStars } from "./ProductReviews";
 
 interface ProductCardProps {
   product: Product;
@@ -47,14 +48,30 @@ const ProductCard = ({ product }: ProductCardProps) => {
               FEATURED
             </div>
           )}
+          {/* Color dots */}
+          {product.colors && product.colors.length > 0 && (
+            <div className="absolute top-3 right-3 flex gap-1">
+              {product.colors.slice(0, 4).map((c, i) => (
+                <span key={i} className="w-4 h-4 rounded-full border border-white/40 shadow-sm" style={{ backgroundColor: c }} />
+              ))}
+              {product.colors.length > 4 && (
+                <span className="w-4 h-4 rounded-full bg-muted flex items-center justify-center text-[8px] text-muted-foreground border border-white/20">
+                  +{product.colors.length - 4}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="p-5">
-          <p className="text-xs text-primary font-medium uppercase tracking-wider mb-1">{product.category}</p>
-          <h3 className="font-bold font-space text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-1">
+          <p className="text-xs text-primary font-medium uppercase tracking-wider mb-1">
+            {product.brand ? `${product.brand} · ` : ""}{product.category}
+          </p>
+          <h3 className="font-bold font-space text-foreground group-hover:text-primary transition-colors mb-1 line-clamp-1">
             {product.name}
           </h3>
-          <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{product.description}</p>
+          <AverageStars productId={product.id} compact />
+          <p className="text-muted-foreground text-sm mb-4 line-clamp-2 mt-1">{product.description}</p>
 
           <div className="flex items-center justify-between">
             <div className="flex items-baseline gap-2">
