@@ -86,9 +86,10 @@ const OrdersPage = () => {
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
-              <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">No orders yet.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">No orders yet.</TableCell></TableRow>
             ) : orders.map(o => (
               <TableRow key={o.id}>
+                <TableCell className="font-mono text-xs">{o.tracking_number || o.id.slice(0, 8).toUpperCase()}</TableCell>
                 <TableCell className="text-sm">{new Date(o.created_at).toLocaleDateString()}</TableCell>
                 <TableCell className="font-medium">{o.customer_name}</TableCell>
                 <TableCell className="hidden md:table-cell text-sm">{o.customer_email}</TableCell>
