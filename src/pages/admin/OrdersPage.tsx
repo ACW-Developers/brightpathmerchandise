@@ -73,6 +73,7 @@ const OrdersPage = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Order #</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Customer</TableHead>
               <TableHead className="hidden md:table-cell">Email</TableHead>
