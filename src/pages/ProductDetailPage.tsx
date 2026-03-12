@@ -4,12 +4,23 @@ import { supabase } from "@/integrations/supabase/client";
 import StoreNavigation from "@/components/store/StoreNavigation";
 import StoreFooter from "@/components/store/StoreFooter";
 import ProductCard from "@/components/store/ProductCard";
+import ProductReviews from "@/components/store/ProductReviews";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { ShoppingCart, Minus, Plus, ArrowLeft, Loader2, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { AverageStars } from "@/components/store/ProductReviews";
 import type { Product } from "@/types/product";
+
+const COLOR_NAMES: Record<string, string> = {
+  "#000000": "Black", "#ffffff": "White", "#ff0000": "Red", "#00ff00": "Green",
+  "#0000ff": "Blue", "#ffff00": "Yellow", "#ff00ff": "Pink", "#808080": "Gray",
+  "#800000": "Maroon", "#008000": "Dark Green", "#000080": "Navy", "#ffa500": "Orange",
+  "#800080": "Purple", "#008080": "Teal", "#c0c0c0": "Silver", "#ffd700": "Gold",
+};
+
+const getColorName = (hex: string) => COLOR_NAMES[hex.toLowerCase()] || hex;
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +30,8 @@ const ProductDetailPage = () => {
   const [related, setRelated] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState<string | undefined>();
+  const [selectedSize, setSelectedSize] = useState<string | undefined>();
   const addItem = useCartStore(s => s.addItem);
 
   useEffect(() => {
@@ -27,15 +40,20 @@ const ProductDetailPage = () => {
       setLoading(true);
       const { data } = await supabase.from("products").select("*").eq("id", id).single();
       if (data) {
-        const p = data as Product;
+        const p = {
+          ...data,
+          colors: Array.isArray(data.colors) ? data.colors : [],
+          sizes: Array.isArray(data.sizes) ? data.sizes : [],
+          brand: data.brand || null,
+        } as Product;
         setProduct(p);
+        setSelectedColor(p.colors.length > 0 ? p.colors[0] : undefined);
+        setSelectedSize(p.sizes.length > 0 ? p.sizes[0] : undefined);
 
-        // Fetch additional images
         const { data: imgs } = await supabase.from("product_images").select("image_url").eq("product_id", id).order("display_order");
         const allImages = [p.image_url, ...(imgs || []).map((i: any) => i.image_url)].filter(Boolean) as string[];
         setImages(allImages.length > 0 ? allImages : []);
 
-        // Fetch related products
         const { data: rel } = await supabase.from("products").select("*").eq("category", p.category).neq("id", id).limit(4);
         setRelated((rel as Product[]) || []);
       }
@@ -48,7 +66,15 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (!product) return;
-    for (let i = 0; i < quantity; i++) addItem(product);
+    if (product.colors.length > 0 && !selectedColor) {
+      toast({ title: "Please select a color", variant: "destructive" });
+      return;
+    }
+    if (product.sizes.length > 0 && !selectedSize) {
+      toast({ title: "Please select a size", variant: "destructive" });
+      return;
+    }
+    for (let i = 0; i < quantity; i++) addItem(product, selectedColor, selectedSize);
     toast({ title: "Added to cart", description: `${quantity}x ${product.name} added.` });
   };
 
@@ -82,7 +108,6 @@ const ProductDetailPage = () => {
       <StoreNavigation />
       <main className="pt-20 pb-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
-          {/* Breadcrumb */}
           <Link to="/shop" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Shop
           </Link>
@@ -114,7 +139,6 @@ const ProductDetailPage = () => {
                   <div className="absolute top-4 left-4 bg-destructive text-destructive-foreground text-xs font-bold px-3 py-1 rounded-full">SALE</div>
                 )}
               </div>
-              {/* Thumbnails */}
               {images.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {images.map((img, i) => (
@@ -129,10 +153,13 @@ const ProductDetailPage = () => {
 
             {/* Product info */}
             <div className="flex flex-col">
-              <p className="text-sm text-primary font-medium uppercase tracking-wider mb-2">{product.category}</p>
-              <h1 className="text-3xl md:text-4xl font-bold font-space mb-4">{product.name}</h1>
+              <p className="text-sm text-primary font-medium uppercase tracking-wider mb-1">
+                {product.brand ? `${product.brand} · ` : ""}{product.category}
+              </p>
+              <h1 className="text-3xl md:text-4xl font-bold font-space mb-2">{product.name}</h1>
+              <AverageStars productId={product.id} />
 
-              <div className="flex items-baseline gap-3 mb-6">
+              <div className="flex items-baseline gap-3 mb-6 mt-3">
                 <span className="text-3xl font-bold text-primary font-space">${effectivePrice.toFixed(2)}</span>
                 {product.is_on_sale && product.sale_price && (
                   <span className="text-lg text-muted-foreground line-through">${product.price.toFixed(2)}</span>
@@ -140,7 +167,53 @@ const ProductDetailPage = () => {
               </div>
 
               {product.description && (
-                <p className="text-muted-foreground leading-relaxed mb-8">{product.description}</p>
+                <p className="text-muted-foreground leading-relaxed mb-6">{product.description}</p>
+              )}
+
+              {/* Color selection */}
+              {product.colors.length > 0 && (
+                <div className="mb-5">
+                  <span className="text-sm font-medium mb-2 block">
+                    Color: <span className="text-primary">{selectedColor ? getColorName(selectedColor) : "Select"}</span>
+                  </span>
+                  <div className="flex gap-2 flex-wrap">
+                    {product.colors.map((c, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedColor(c)}
+                        className={`w-9 h-9 rounded-full border-2 transition-all hover:scale-110 ${
+                          selectedColor === c ? "border-primary ring-2 ring-primary/30 scale-110" : "border-white/20"
+                        }`}
+                        style={{ backgroundColor: c }}
+                        title={getColorName(c)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Size selection */}
+              {product.sizes.length > 0 && (
+                <div className="mb-5">
+                  <span className="text-sm font-medium mb-2 block">
+                    Size: <span className="text-primary">{selectedSize || "Select"}</span>
+                  </span>
+                  <div className="flex gap-2 flex-wrap">
+                    {product.sizes.map((s, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedSize(s)}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                          selectedSize === s
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
 
               <div className="flex items-center gap-3 mb-2 text-sm text-muted-foreground">
@@ -167,6 +240,11 @@ const ProductDetailPage = () => {
               </Button>
             </div>
           </div>
+
+          {/* Reviews */}
+          <section className="mb-16">
+            <ProductReviews productId={product.id} />
+          </section>
 
           {/* Related Products */}
           {related.length > 0 && (
