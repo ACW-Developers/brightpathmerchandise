@@ -3,6 +3,7 @@ import StoreNavigation from "@/components/store/StoreNavigation";
 import StoreFooter from "@/components/store/StoreFooter";
 import ProductCard from "@/components/store/ProductCard";
 import HeroCarousel from "@/components/store/HeroCarousel";
+import MarketingBanner from "@/components/store/MarketingBanner";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
 import { useProducts, useFeaturedProducts, useSaleProducts, useCategories } from "@/hooks/useProducts";
 import { Sparkles, Flame, ShoppingBag, Search, TrendingUp } from "lucide-react";
@@ -29,6 +30,11 @@ const StorePage = () => {
         {/* Hero Carousel */}
         <HeroCarousel />
 
+        {/* Hero Banner */}
+        <div className="max-w-7xl mx-auto px-6 mt-8">
+          <MarketingBanner position="hero" />
+        </div>
+
         {/* Featured Products */}
         {featured.length > 0 && (
           <section className="py-16 px-6">
@@ -43,6 +49,11 @@ const StorePage = () => {
             </div>
           </section>
         )}
+
+        {/* Mid Banner */}
+        <div className="max-w-7xl mx-auto px-6">
+          <MarketingBanner position="home-mid" />
+        </div>
 
         {/* Sale Section */}
         {saleProducts.length > 0 && (
@@ -124,6 +135,11 @@ const StorePage = () => {
             )}
           </div>
         </section>
+
+        {/* Bottom banner */}
+        <div className="max-w-7xl mx-auto px-6 pb-8">
+          <MarketingBanner position="home-bottom" />
+        </div>
       </main>
       <StoreFooter />
       <WhatsAppWidget />
