@@ -125,6 +125,8 @@ const CartDrawer = () => {
         name: i.product.name,
         price: i.product.is_on_sale && i.product.sale_price ? i.product.sale_price : i.product.price,
         quantity: i.quantity,
+        color: i.selectedColor || null,
+        size: i.selectedSize || null,
       }));
 
       const total = totalPrice();
