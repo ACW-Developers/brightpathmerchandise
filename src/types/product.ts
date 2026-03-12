@@ -9,6 +9,9 @@ export interface Product {
   is_on_sale: boolean;
   sale_price: number | null;
   stock_quantity: number;
+  colors: string[];
+  sizes: string[];
+  brand: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -16,6 +19,8 @@ export interface Product {
 export interface CartItem {
   product: Product;
   quantity: number;
+  selectedColor?: string;
+  selectedSize?: string;
 }
 
 export type TrackingStatus = 'pending' | 'confirmed' | 'packaging' | 'shipping' | 'delivered' | 'picked_up';
@@ -34,7 +39,7 @@ export interface Order {
   customer_name: string;
   customer_email: string;
   customer_phone: string | null;
-  items: CartItem[];
+  items: any[];
   total_amount: number;
   status: string;
   created_at: string;
@@ -51,4 +56,28 @@ export interface Order {
   tracking_number: string | null;
   latitude: number | null;
   longitude: number | null;
+}
+
+export interface ProductReview {
+  id: string;
+  product_id: string;
+  customer_name: string;
+  customer_email: string;
+  rating: number;
+  comment: string | null;
+  is_verified_purchase: boolean;
+  order_id: string | null;
+  created_at: string;
+}
+
+export interface MarketingBanner {
+  id: string;
+  title: string;
+  image_url: string;
+  link_url: string | null;
+  position: string;
+  display_order: number;
+  is_active: boolean;
+  dimensions_hint: string;
+  created_at: string;
 }
