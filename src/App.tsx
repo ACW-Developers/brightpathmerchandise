@@ -21,7 +21,16 @@ import TrackOrderPage from "./pages/TrackOrderPage";
 import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
 import ScrollToTop from "./components/ScrollToTop";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 30, // 30 seconds
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => {
   return (
