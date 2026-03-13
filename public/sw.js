@@ -1,4 +1,4 @@
-// Minimal service worker - network first, no aggressive caching
+// Network-first service worker — never serve stale data
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => {
   event.waitUntil(
@@ -6,6 +6,7 @@ self.addEventListener('activate', (event) => {
       .then(() => self.clients.claim())
   );
 });
+// Always go to network; never cache API or dynamic content
 self.addEventListener('fetch', (event) => {
-  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+  event.respondWith(fetch(event.request));
 });
