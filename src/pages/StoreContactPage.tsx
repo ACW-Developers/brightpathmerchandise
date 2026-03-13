@@ -159,7 +159,7 @@ const StoreContactPage = () => {
               viewport={{ once: true }}
               className="lg:col-span-3"
             >
-              <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-6 md:p-8 shadow-2xl shadow-primary/5">
+              <div className="rounded-2xl border-2 border-primary/20 bg-card backdrop-blur-sm p-6 md:p-8 shadow-2xl shadow-primary/5 relative overflow-hidden">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
                     <Send className="w-4 h-4 text-white" />
