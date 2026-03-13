@@ -3,6 +3,7 @@ import { Menu, X, LogIn, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import CartDrawer from "./CartDrawer";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/logo/logo.png";
 
@@ -21,7 +22,7 @@ const StoreNavigation = () => {
   const isActive = (href: string) => location.pathname === href;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-xl border-b border-white/10">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
@@ -41,8 +42,9 @@ const StoreNavigation = () => {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
             <CartDrawer />
+            <ThemeToggle />
             {isAdmin && (
               <Link to="/admin">
                 <Button variant="ghost" size="sm" className="gap-1">
@@ -56,7 +58,7 @@ const StoreNavigation = () => {
               </Button>
             ) : (
               <Link to="/login">
-                <Button variant="glass" size="sm" className="gap-1">
+                <Button variant="outline" size="sm" className="gap-1">
                   <LogIn className="w-4 h-4" /> Sign In
                 </Button>
               </Link>
@@ -65,14 +67,15 @@ const StoreNavigation = () => {
 
           <div className="md:hidden flex items-center gap-2">
             <CartDrawer />
-            <button onClick={() => setIsOpen(!isOpen)} className="glass-button p-2">
+            <ThemeToggle />
+            <button onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-lg hover:bg-muted transition-colors">
               {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
         {isOpen && (
-          <div className="md:hidden border-t border-white/10 pb-4">
+          <div className="md:hidden border-t border-border pb-4">
             <div className="pt-2 space-y-1">
               {navItems.map((item) => (
                 <Link

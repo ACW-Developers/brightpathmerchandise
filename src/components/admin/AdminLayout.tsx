@@ -3,9 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard, Package, ShoppingCart, FileText, Receipt, Settings,
-  User, LogOut, Menu, X, ChevronLeft, Image,
+  User, LogOut, Menu, X, ChevronLeft, Image, BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo/logo.png";
 
 const menuItems = [
@@ -13,6 +14,7 @@ const menuItems = [
   { label: "Products", icon: Package, path: "/admin/products" },
   { label: "Orders", icon: ShoppingCart, path: "/admin/orders" },
   { label: "Banners", icon: Image, path: "/admin/banners" },
+  { label: "Analytics", icon: BarChart3, path: "/admin/analytics" },
   { label: "Invoices", icon: FileText, path: "/admin/invoices" },
   { label: "Receipts", icon: Receipt, path: "/admin/receipts" },
   { label: "Settings", icon: Settings, path: "/admin/settings" },
@@ -37,14 +39,11 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Sidebar */}
-      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-64 bg-card/50 backdrop-blur-xl border-r border-border z-50 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
-        {/* Logo */}
+      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-64 bg-card/80 backdrop-blur-xl border-r border-border z-50 flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
         <div className="p-4 border-b border-border flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src={logo} alt="Logo" className="h-8 w-8 object-contain" />
@@ -55,8 +54,7 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
           </button>
         </div>
 
-        {/* Menu */}
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto scrollbar-hide">
           {menuItems.map((item) => (
             <Link
               key={item.path}
@@ -74,7 +72,6 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
           ))}
         </nav>
 
-        {/* Footer */}
         <div className="p-3 border-t border-border space-y-1">
           <Link
             to="/"
@@ -93,17 +90,17 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
         </div>
       </aside>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
-        {/* Top bar */}
-        <header className="sticky top-0 z-30 h-14 bg-card/50 backdrop-blur-xl border-b border-border flex items-center px-4 gap-3">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 hover:bg-muted rounded-lg">
-            <Menu className="w-5 h-5" />
-          </button>
-          <h1 className="text-lg font-bold font-space">{title}</h1>
+        <header className="sticky top-0 z-30 h-14 bg-card/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 hover:bg-muted rounded-lg">
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-lg font-bold font-space">{title}</h1>
+          </div>
+          <ThemeToggle />
         </header>
 
-        {/* Content */}
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           {children}
         </main>
