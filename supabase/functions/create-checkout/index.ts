@@ -29,6 +29,9 @@ serve(async (req) => {
     }
 
     const total = items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
+    if (total < 0.50) {
+      throw new Error("Order total must be at least $0.50 USD. Please add more items or choose a different product.");
+    }
     const trackingNum = `TRK-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 
     // Create pending order in DB first
