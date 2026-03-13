@@ -155,13 +155,30 @@
   }
 
   .glass-button {
-    @apply bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-xl border border-white/30 rounded-xl;
+    @apply bg-muted/50 backdrop-blur-xl border border-border rounded-xl;
     transition: var(--transition-smooth);
   }
 
+  .dark-theme .glass-button {
+    @apply bg-gradient-to-r from-white/20 to-white/10 border-white/30;
+  }
+
   .glass-button:hover {
-    @apply from-white/30 to-white/20 border-white/40;
+    @apply bg-muted/70;
     box-shadow: var(--shadow-glow);
+  }
+
+  .dark-theme .glass-button:hover {
+    @apply from-white/30 to-white/20 border-white/40;
+  }
+
+  /* Hide scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 
   /* Gradient text effects */
