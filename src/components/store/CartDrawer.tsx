@@ -1,17 +1,29 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Check, Printer, ArrowLeft, MapPin, Phone, User, Copy, Banknote } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Check, Printer, ArrowLeft, MapPin, Phone, User, Copy, Banknote, Truck } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import logo from "@/assets/logo/logo.png";
 
 type Step = "cart" | "details" | "delivery" | "payment" | "confirmation";
+
+interface ShippingSettings {
+  shipping_fee: number;
+  free_shipping_enabled: boolean;
+  free_shipping_threshold: number;
+}
+
+const DEFAULT_SHIPPING: ShippingSettings = {
+  shipping_fee: 5.99,
+  free_shipping_enabled: false,
+  free_shipping_threshold: 50,
+};
 
 const BANK_DETAILS = {
   bankName: "Chase Bank",
