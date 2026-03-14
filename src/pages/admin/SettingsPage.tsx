@@ -69,6 +69,9 @@ const SettingsPage = () => {
       paypal_email: form.paypal_email,
       venmo_handle: form.venmo_handle,
       accent_color: form.accent_color,
+      shipping_fee: parseFloat(form.shipping_fee) || 5.99,
+      free_shipping_enabled: form.free_shipping_enabled,
+      free_shipping_threshold: parseFloat(form.free_shipping_threshold) || 50,
     } as any).eq("id", form.id);
 
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
