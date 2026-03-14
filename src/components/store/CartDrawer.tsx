@@ -340,9 +340,20 @@ const CartDrawer = () => {
                     })}
                   </div>
                   <div className="flex-shrink-0 pt-4 border-t border-border space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span>${totalPrice().toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground flex items-center gap-1"><Truck className="w-3 h-3" /> Shipping</span>
+                      <span>{shippingFee === 0 ? <span className="text-green-500">Free</span> : `$${shippingFee.toFixed(2)}`}</span>
+                    </div>
+                    {shippingFee === 0 && !shippingSettings.free_shipping_enabled && (
+                      <p className="text-[10px] text-green-500">Free shipping on orders over ${shippingSettings.free_shipping_threshold}</p>
+                    )}
                     <div className="flex justify-between">
                       <span className="font-semibold">Total</span>
-                      <span className="font-bold text-primary text-xl">${totalPrice().toFixed(2)}</span>
+                      <span className="font-bold text-primary text-xl">${grandTotal.toFixed(2)}</span>
                     </div>
                     <Button onClick={() => setStep("details")} className="w-full" size="lg">
                       Proceed to Checkout
