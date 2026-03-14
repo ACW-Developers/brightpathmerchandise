@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import type { Product } from "@/types/product";
 import { toast } from "@/hooks/use-toast";
 import { AverageStars } from "./ProductReviews";
-import OptimizedImage from "@/components/OptimizedImage";
+
 
 interface ProductCardProps {
   product: Product;
