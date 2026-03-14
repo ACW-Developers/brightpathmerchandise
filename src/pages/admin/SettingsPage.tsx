@@ -206,22 +206,15 @@ const SettingsPage = () => {
                   <p className="font-medium text-sm">Free Shipping</p>
                   <p className="text-xs text-muted-foreground">Offer free shipping on all orders</p>
                 </div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between py-3 border-b border-border/30">
-                <div>
-                  <p className="font-medium text-sm">International Shipping</p>
-                  <p className="text-xs text-muted-foreground">Ship to countries outside the US</p>
-                </div>
-                <Switch defaultChecked />
+                <Switch checked={form.free_shipping_enabled} onCheckedChange={v => setForm(f => ({ ...f, free_shipping_enabled: v }))} />
               </div>
               <div className="space-y-2">
                 <Label>Default Shipping Fee ($)</Label>
-                <Input type="number" step="0.01" defaultValue="5.99" className="max-w-48" />
+                <Input type="number" step="0.01" value={form.shipping_fee} onChange={e => setForm(f => ({ ...f, shipping_fee: e.target.value }))} className="max-w-48" />
               </div>
               <div className="space-y-2">
                 <Label>Free Shipping Threshold ($)</Label>
-                <Input type="number" step="1" defaultValue="50" className="max-w-48" />
+                <Input type="number" step="1" value={form.free_shipping_threshold} onChange={e => setForm(f => ({ ...f, free_shipping_threshold: e.target.value }))} className="max-w-48" />
                 <p className="text-xs text-muted-foreground">Orders above this amount get free shipping</p>
               </div>
             </div>
