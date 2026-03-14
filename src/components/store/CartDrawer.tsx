@@ -212,6 +212,7 @@ const CartDrawer = () => {
         tracking_number: trackingNum,
         items: orderItems,
         total,
+        shippingFee,
         method: "Bank Transfer (Pending)",
         date: new Date().toLocaleString(),
       });
