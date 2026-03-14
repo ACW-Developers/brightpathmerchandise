@@ -91,11 +91,11 @@ const MarketingBanner = ({ position, className = "" }: Props) => {
         transition={{ duration: 0.6 }}
         className={`rounded-2xl overflow-hidden border border-white/10 shadow-lg hover:shadow-primary/20 transition-shadow duration-500 ${className}`}
       >
-        <OptimizedImage
+        <img
           src={b.image_url}
           alt={b.title}
-          className={`w-full ${hClass}`}
-          quality={65}
+          className={`w-full ${hClass} object-cover`}
+          loading="lazy"
         />
       </motion.div>
     );
