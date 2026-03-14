@@ -59,11 +59,8 @@ const CartDrawer = () => {
     });
   }, []);
 
-  const shippingFee = shippingSettings.free_shipping_enabled
-    ? 0
-    : totalPrice() >= shippingSettings.free_shipping_threshold
-      ? 0
-      : shippingSettings.shipping_fee;
+  // Shipping temporarily disabled for testing
+  const shippingFee = 0;
 
   const grandTotal = totalPrice() + shippingFee;
 
