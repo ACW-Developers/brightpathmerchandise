@@ -548,7 +548,7 @@ const CartDrawer = () => {
                   </div>
                   <div className="border-t border-border pt-2">
                     <p className="text-xs text-muted-foreground">Amount to Send</p>
-                    <p className="font-bold text-primary text-lg">${totalPrice().toFixed(2)}</p>
+                    <p className="font-bold text-primary text-lg">${grandTotal.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
