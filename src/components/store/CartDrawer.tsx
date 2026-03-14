@@ -60,7 +60,7 @@ const CartDrawer = () => {
   }, []);
 
   // Shipping temporarily disabled for testing
-  const shippingFee = 0;
+  const shippingFee: number = 0;
 
   const grandTotal = totalPrice() + shippingFee;
 
