@@ -164,7 +164,7 @@ const CartDrawer = () => {
         size: i.selectedSize || null,
       }));
 
-      const total = totalPrice();
+      const total = grandTotal;
       const receiptNum = `RCP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
       const trackingNum = `TRK-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 
