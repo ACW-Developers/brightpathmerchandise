@@ -610,6 +610,12 @@ const CartDrawer = () => {
                   </tbody>
                 </table>
                 <div style={{ borderTop: "1px dashed #444", margin: "8px 0" }} />
+                {receiptData.shippingFee > 0 && (
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
+                    <span>Shipping</span>
+                    <span>${receiptData.shippingFee.toFixed(2)}</span>
+                  </div>
+                )}
                 <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: 14 }}>
                   <span>Total</span>
                   <span>${receiptData.total.toFixed(2)}</span>

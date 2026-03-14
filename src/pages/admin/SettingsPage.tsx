@@ -24,6 +24,7 @@ const SettingsPage = () => {
     business_address: "", currency: "USD", tax_rate: "0",
     whatsapp_number: "", paypal_email: "", venmo_handle: "",
     accent_color: "#38bdf8",
+    shipping_fee: "5.99", free_shipping_enabled: false, free_shipping_threshold: "50",
   });
 
   useEffect(() => {
