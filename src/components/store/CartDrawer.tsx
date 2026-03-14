@@ -447,9 +447,17 @@ const CartDrawer = () => {
               </div>
 
               <div className="pt-4 border-t border-border space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>${totalPrice().toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground flex items-center gap-1"><Truck className="w-3 h-3" /> Shipping</span>
+                  <span>{shippingFee === 0 ? <span className="text-green-500">Free</span> : `$${shippingFee.toFixed(2)}`}</span>
+                </div>
                 <div className="flex justify-between mb-2">
                   <span className="font-semibold">Total</span>
-                  <span className="font-bold text-primary text-xl">${totalPrice().toFixed(2)}</span>
+                  <span className="font-bold text-primary text-xl">${grandTotal.toFixed(2)}</span>
                 </div>
                 <Button onClick={() => setStep("payment")} className="w-full" size="lg" disabled={!canProceedToPayment}>
                   Continue to Payment
