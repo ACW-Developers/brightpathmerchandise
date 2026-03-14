@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import type { Product } from "@/types/product";
 import { toast } from "@/hooks/use-toast";
 import { AverageStars } from "./ProductReviews";
+import OptimizedImage from "@/components/OptimizedImage";
 
 interface ProductCardProps {
   product: Product;
@@ -26,10 +27,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="glass-card group overflow-hidden hover:scale-[1.03] transition-all duration-500">
         <div className="relative h-56 overflow-hidden">
           {product.image_url ? (
-            <img
+            <OptimizedImage
               src={product.image_url}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full"
+              width={400}
+              quality={70}
             />
           ) : (
             <div className="w-full h-full bg-muted flex items-center justify-center">
