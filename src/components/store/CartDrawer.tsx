@@ -121,7 +121,9 @@ const CartDrawer = () => {
 
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
-          items: orderItems,
+          items: shippingFee > 0
+            ? [...orderItems, { name: "Shipping Fee", price: shippingFee, quantity: 1 }]
+            : orderItems,
           customer_email: form.email,
           customer_name: form.name,
           order_metadata: orderMetadata,
