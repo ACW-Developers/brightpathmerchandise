@@ -441,9 +441,12 @@ export type Database = {
           business_phone: string | null
           created_at: string
           currency: string
+          free_shipping_enabled: boolean
+          free_shipping_threshold: number
           id: string
           logo_url: string | null
           paypal_email: string | null
+          shipping_fee: number
           tax_rate: number
           theme: string
           updated_at: string
@@ -458,9 +461,12 @@ export type Database = {
           business_phone?: string | null
           created_at?: string
           currency?: string
+          free_shipping_enabled?: boolean
+          free_shipping_threshold?: number
           id?: string
           logo_url?: string | null
           paypal_email?: string | null
+          shipping_fee?: number
           tax_rate?: number
           theme?: string
           updated_at?: string
@@ -475,9 +481,12 @@ export type Database = {
           business_phone?: string | null
           created_at?: string
           currency?: string
+          free_shipping_enabled?: boolean
+          free_shipping_threshold?: number
           id?: string
           logo_url?: string | null
           paypal_email?: string | null
+          shipping_fee?: number
           tax_rate?: number
           theme?: string
           updated_at?: string

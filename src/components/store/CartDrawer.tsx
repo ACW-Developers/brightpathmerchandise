@@ -1,17 +1,29 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Check, Printer, ArrowLeft, MapPin, Phone, User, Copy, Banknote } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Check, Printer, ArrowLeft, MapPin, Phone, User, Copy, Banknote, Truck } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import logo from "@/assets/logo/logo.png";
 
 type Step = "cart" | "details" | "delivery" | "payment" | "confirmation";
+
+interface ShippingSettings {
+  shipping_fee: number;
+  free_shipping_enabled: boolean;
+  free_shipping_threshold: number;
+}
+
+const DEFAULT_SHIPPING: ShippingSettings = {
+  shipping_fee: 5.99,
+  free_shipping_enabled: false,
+  free_shipping_threshold: 50,
+};
 
 const BANK_DETAILS = {
   bankName: "Chase Bank",
@@ -33,6 +45,27 @@ const CartDrawer = () => {
   const [receiptData, setReceiptData] = useState<any>(null);
   const { items, updateQuantity, removeItem, clearCart, totalItems, totalPrice } = useCartStore();
   const printRef = useRef<HTMLDivElement>(null);
+  const [shippingSettings, setShippingSettings] = useState<ShippingSettings>(DEFAULT_SHIPPING);
+
+  useEffect(() => {
+    supabase.from("store_settings").select("shipping_fee, free_shipping_enabled, free_shipping_threshold").limit(1).single().then(({ data }) => {
+      if (data) {
+        setShippingSettings({
+          shipping_fee: (data as any).shipping_fee ?? DEFAULT_SHIPPING.shipping_fee,
+          free_shipping_enabled: (data as any).free_shipping_enabled ?? DEFAULT_SHIPPING.free_shipping_enabled,
+          free_shipping_threshold: (data as any).free_shipping_threshold ?? DEFAULT_SHIPPING.free_shipping_threshold,
+        });
+      }
+    });
+  }, []);
+
+  const shippingFee = shippingSettings.free_shipping_enabled
+    ? 0
+    : totalPrice() >= shippingSettings.free_shipping_threshold
+      ? 0
+      : shippingSettings.shipping_fee;
+
+  const grandTotal = totalPrice() + shippingFee;
 
   const geocodeAddress = async () => {
     try {
@@ -88,7 +121,9 @@ const CartDrawer = () => {
 
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
-          items: orderItems,
+          items: shippingFee > 0
+            ? [...orderItems, { name: "Shipping Fee", price: shippingFee, quantity: 1 }]
+            : orderItems,
           customer_email: form.email,
           customer_name: form.name,
           order_metadata: orderMetadata,
@@ -129,7 +164,7 @@ const CartDrawer = () => {
         size: i.selectedSize || null,
       }));
 
-      const total = totalPrice();
+      const total = grandTotal;
       const receiptNum = `RCP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
       const trackingNum = `TRK-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 
@@ -177,6 +212,7 @@ const CartDrawer = () => {
         tracking_number: trackingNum,
         items: orderItems,
         total,
+        shippingFee,
         method: "Bank Transfer (Pending)",
         date: new Date().toLocaleString(),
       });
@@ -307,9 +343,20 @@ const CartDrawer = () => {
                     })}
                   </div>
                   <div className="flex-shrink-0 pt-4 border-t border-border space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span>${totalPrice().toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground flex items-center gap-1"><Truck className="w-3 h-3" /> Shipping</span>
+                      <span>{shippingFee === 0 ? <span className="text-green-500">Free</span> : `$${shippingFee.toFixed(2)}`}</span>
+                    </div>
+                    {shippingFee === 0 && !shippingSettings.free_shipping_enabled && (
+                      <p className="text-[10px] text-green-500">Free shipping on orders over ${shippingSettings.free_shipping_threshold}</p>
+                    )}
                     <div className="flex justify-between">
                       <span className="font-semibold">Total</span>
-                      <span className="font-bold text-primary text-xl">${totalPrice().toFixed(2)}</span>
+                      <span className="font-bold text-primary text-xl">${grandTotal.toFixed(2)}</span>
                     </div>
                     <Button onClick={() => setStep("details")} className="w-full" size="lg">
                       Proceed to Checkout
@@ -403,9 +450,17 @@ const CartDrawer = () => {
               </div>
 
               <div className="pt-4 border-t border-border space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>${totalPrice().toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground flex items-center gap-1"><Truck className="w-3 h-3" /> Shipping</span>
+                  <span>{shippingFee === 0 ? <span className="text-green-500">Free</span> : `$${shippingFee.toFixed(2)}`}</span>
+                </div>
                 <div className="flex justify-between mb-2">
                   <span className="font-semibold">Total</span>
-                  <span className="font-bold text-primary text-xl">${totalPrice().toFixed(2)}</span>
+                  <span className="font-bold text-primary text-xl">${grandTotal.toFixed(2)}</span>
                 </div>
                 <Button onClick={() => setStep("payment")} className="w-full" size="lg" disabled={!canProceedToPayment}>
                   Continue to Payment
@@ -429,16 +484,24 @@ const CartDrawer = () => {
                   <span className="text-muted-foreground">Deliver to</span>
                   <span className="font-medium text-right text-xs">{form.address}, {form.city}</span>
                 </div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>${totalPrice().toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-muted-foreground flex items-center gap-1"><Truck className="w-3 h-3" /> Shipping</span>
+                  <span>{shippingFee === 0 ? <span className="text-green-500">Free</span> : `$${shippingFee.toFixed(2)}`}</span>
+                </div>
                 <div className="flex justify-between mt-2">
                   <span className="font-semibold">Total</span>
-                  <span className="font-bold text-primary text-xl">${totalPrice().toFixed(2)}</span>
+                  <span className="font-bold text-primary text-xl">${grandTotal.toFixed(2)}</span>
                 </div>
               </div>
 
               {/* Stripe Card Payment */}
               <Button onClick={handleStripeCheckout} disabled={isOrdering} className="w-full gap-2 h-12" size="lg">
                 {isOrdering ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-5 h-5" />}
-                Pay with Card — ${totalPrice().toFixed(2)}
+                Pay with Card — ${grandTotal.toFixed(2)}
               </Button>
 
               <div className="relative my-2">
@@ -488,7 +551,7 @@ const CartDrawer = () => {
                   </div>
                   <div className="border-t border-border pt-2">
                     <p className="text-xs text-muted-foreground">Amount to Send</p>
-                    <p className="font-bold text-primary text-lg">${totalPrice().toFixed(2)}</p>
+                    <p className="font-bold text-primary text-lg">${grandTotal.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
@@ -547,6 +610,12 @@ const CartDrawer = () => {
                   </tbody>
                 </table>
                 <div style={{ borderTop: "1px dashed #444", margin: "8px 0" }} />
+                {receiptData.shippingFee > 0 && (
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
+                    <span>Shipping</span>
+                    <span>${receiptData.shippingFee.toFixed(2)}</span>
+                  </div>
+                )}
                 <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: 14 }}>
                   <span>Total</span>
                   <span>${receiptData.total.toFixed(2)}</span>

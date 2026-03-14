@@ -24,6 +24,7 @@ const SettingsPage = () => {
     business_address: "", currency: "USD", tax_rate: "0",
     whatsapp_number: "", paypal_email: "", venmo_handle: "",
     accent_color: "#38bdf8",
+    shipping_fee: "5.99", free_shipping_enabled: false, free_shipping_threshold: "50",
   });
 
   useEffect(() => {
@@ -45,6 +46,9 @@ const SettingsPage = () => {
             paypal_email: (data as any).paypal_email || "",
             venmo_handle: (data as any).venmo_handle || "",
             accent_color: (data as any).accent_color || "#38bdf8",
+            shipping_fee: String((data as any).shipping_fee ?? 5.99),
+            free_shipping_enabled: (data as any).free_shipping_enabled ?? false,
+            free_shipping_threshold: String((data as any).free_shipping_threshold ?? 50),
           });
         }
         setLoading(false);
@@ -65,6 +69,9 @@ const SettingsPage = () => {
       paypal_email: form.paypal_email,
       venmo_handle: form.venmo_handle,
       accent_color: form.accent_color,
+      shipping_fee: parseFloat(form.shipping_fee) || 5.99,
+      free_shipping_enabled: form.free_shipping_enabled,
+      free_shipping_threshold: parseFloat(form.free_shipping_threshold) || 50,
     } as any).eq("id", form.id);
 
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -199,22 +206,15 @@ const SettingsPage = () => {
                   <p className="font-medium text-sm">Free Shipping</p>
                   <p className="text-xs text-muted-foreground">Offer free shipping on all orders</p>
                 </div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between py-3 border-b border-border/30">
-                <div>
-                  <p className="font-medium text-sm">International Shipping</p>
-                  <p className="text-xs text-muted-foreground">Ship to countries outside the US</p>
-                </div>
-                <Switch defaultChecked />
+                <Switch checked={form.free_shipping_enabled} onCheckedChange={v => setForm(f => ({ ...f, free_shipping_enabled: v }))} />
               </div>
               <div className="space-y-2">
                 <Label>Default Shipping Fee ($)</Label>
-                <Input type="number" step="0.01" defaultValue="5.99" className="max-w-48" />
+                <Input type="number" step="0.01" value={form.shipping_fee} onChange={e => setForm(f => ({ ...f, shipping_fee: e.target.value }))} className="max-w-48" />
               </div>
               <div className="space-y-2">
                 <Label>Free Shipping Threshold ($)</Label>
-                <Input type="number" step="1" defaultValue="50" className="max-w-48" />
+                <Input type="number" step="1" value={form.free_shipping_threshold} onChange={e => setForm(f => ({ ...f, free_shipping_threshold: e.target.value }))} className="max-w-48" />
                 <p className="text-xs text-muted-foreground">Orders above this amount get free shipping</p>
               </div>
             </div>
