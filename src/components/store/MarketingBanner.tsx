@@ -118,11 +118,11 @@ const MarketingBanner = ({ position, className = "" }: Props) => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="w-full"
         >
-          <OptimizedImage
+          <img
             src={b.image_url}
             alt={b.title}
-            className={`w-full ${hClass}`}
-            quality={65}
+            className={`w-full ${hClass} object-cover`}
+            loading="lazy"
           />
         </motion.div>
       </AnimatePresence>

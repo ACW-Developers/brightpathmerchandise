@@ -27,12 +27,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="glass-card group overflow-hidden hover:scale-[1.03] transition-all duration-500">
         <div className="relative h-56 overflow-hidden">
           {product.image_url ? (
-            <OptimizedImage
+            <img
               src={product.image_url}
               alt={product.name}
-              className="w-full h-full"
-              width={400}
-              quality={70}
+              className="w-full h-full object-cover"
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full bg-muted flex items-center justify-center">
