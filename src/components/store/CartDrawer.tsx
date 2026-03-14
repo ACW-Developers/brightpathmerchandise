@@ -45,6 +45,27 @@ const CartDrawer = () => {
   const [receiptData, setReceiptData] = useState<any>(null);
   const { items, updateQuantity, removeItem, clearCart, totalItems, totalPrice } = useCartStore();
   const printRef = useRef<HTMLDivElement>(null);
+  const [shippingSettings, setShippingSettings] = useState<ShippingSettings>(DEFAULT_SHIPPING);
+
+  useEffect(() => {
+    supabase.from("store_settings").select("shipping_fee, free_shipping_enabled, free_shipping_threshold").limit(1).single().then(({ data }) => {
+      if (data) {
+        setShippingSettings({
+          shipping_fee: (data as any).shipping_fee ?? DEFAULT_SHIPPING.shipping_fee,
+          free_shipping_enabled: (data as any).free_shipping_enabled ?? DEFAULT_SHIPPING.free_shipping_enabled,
+          free_shipping_threshold: (data as any).free_shipping_threshold ?? DEFAULT_SHIPPING.free_shipping_threshold,
+        });
+      }
+    });
+  }, []);
+
+  const shippingFee = shippingSettings.free_shipping_enabled
+    ? 0
+    : totalPrice() >= shippingSettings.free_shipping_threshold
+      ? 0
+      : shippingSettings.shipping_fee;
+
+  const grandTotal = totalPrice() + shippingFee;
 
   const geocodeAddress = async () => {
     try {
