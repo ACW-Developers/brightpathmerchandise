@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useBanners } from "@/hooks/useProducts";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import OptimizedImage from "@/components/OptimizedImage";
+
 
 interface Props {
   position: string;
@@ -91,11 +91,11 @@ const MarketingBanner = ({ position, className = "" }: Props) => {
         transition={{ duration: 0.6 }}
         className={`rounded-2xl overflow-hidden border border-white/10 shadow-lg hover:shadow-primary/20 transition-shadow duration-500 ${className}`}
       >
-        <OptimizedImage
+        <img
           src={b.image_url}
           alt={b.title}
-          className={`w-full ${hClass}`}
-          quality={65}
+          className={`w-full ${hClass} object-cover`}
+          loading="lazy"
         />
       </motion.div>
     );
@@ -118,11 +118,11 @@ const MarketingBanner = ({ position, className = "" }: Props) => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="w-full"
         >
-          <OptimizedImage
+          <img
             src={b.image_url}
             alt={b.title}
-            className={`w-full ${hClass}`}
-            quality={65}
+            className={`w-full ${hClass} object-cover`}
+            loading="lazy"
           />
         </motion.div>
       </AnimatePresence>
