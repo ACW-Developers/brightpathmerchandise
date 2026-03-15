@@ -3,15 +3,13 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
-// Fully unregister all service workers and clear caches to prevent stale data
+// Unregister stale service workers to fix caching issues
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(registrations => {
     registrations.forEach(reg => reg.unregister());
   });
-}
-// Clear all browser caches on startup
-if ('caches' in window) {
-  caches.keys().then(names => names.forEach(name => caches.delete(name)));
+  // Register fresh SW
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
 // Apply saved theme on load
