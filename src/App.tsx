@@ -26,11 +26,11 @@ import ScrollToTop from "./components/ScrollToTop";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 30,
-      gcTime: 1000 * 60 * 5,
+      staleTime: 0,            // Always treat data as stale → refetch on every mount
+      gcTime: 1000 * 60 * 2,   // Garbage-collect unused cache after 2 min
       refetchInterval: 1000 * 120,
       refetchOnWindowFocus: true,
-      refetchOnMount: true,
+      refetchOnMount: 'always',
       refetchOnReconnect: true,
       retry: 1,
     },
