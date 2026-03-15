@@ -46,7 +46,7 @@ const SettingsPage = () => {
             paypal_email: (data as any).paypal_email || "",
             venmo_handle: (data as any).venmo_handle || "",
             accent_color: (data as any).accent_color || "#38bdf8",
-            shipping_fee: String((data as any).shipping_fee ?? 5.99),
+            shipping_fee: String((data as any).shipping_fee ?? 0),
             free_shipping_enabled: (data as any).free_shipping_enabled ?? false,
             free_shipping_threshold: String((data as any).free_shipping_threshold ?? 50),
           });
@@ -58,7 +58,7 @@ const SettingsPage = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    const { error } = await supabase.from("store_settings").update({
+    const payload = {
       business_name: form.business_name,
       business_email: form.business_email,
       business_phone: form.business_phone,
@@ -69,10 +69,19 @@ const SettingsPage = () => {
       paypal_email: form.paypal_email,
       venmo_handle: form.venmo_handle,
       accent_color: form.accent_color,
-      shipping_fee: parseFloat(form.shipping_fee) || 5.99,
+      shipping_fee: parseFloat(form.shipping_fee) || 0,
       free_shipping_enabled: form.free_shipping_enabled,
       free_shipping_threshold: parseFloat(form.free_shipping_threshold) || 50,
-    } as any).eq("id", form.id);
+    } as any;
+
+    let error;
+    if (form.id) {
+      ({ error } = await supabase.from("store_settings").update(payload).eq("id", form.id));
+    } else {
+      const { data, error: insertError } = await supabase.from("store_settings").insert(payload).select().single();
+      error = insertError;
+      if (data) setForm(f => ({ ...f, id: data.id }));
+    }
 
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else toast({ title: "Settings saved successfully!" });

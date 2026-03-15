@@ -67,25 +67,6 @@ const StoreNavigation = () => {
 
           <div className="md:hidden flex items-center gap-2">
             <CartDrawer />
-            {user ? (
-              isAdmin ? (
-                <Link to="/admin">
-                  <Button variant="ghost" size="icon">
-                    <Shield className="w-4 h-4" />
-                  </Button>
-                </Link>
-              ) : (
-                <Button variant="ghost" size="icon" onClick={signOut}>
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              )
-            ) : (
-              <Link to="/login">
-                <Button variant="ghost" size="icon">
-                  <LogIn className="w-4 h-4" />
-                </Button>
-              </Link>
-            )}
             <button onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-lg hover:bg-muted transition-colors">
               {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
