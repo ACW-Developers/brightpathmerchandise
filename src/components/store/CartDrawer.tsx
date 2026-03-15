@@ -59,8 +59,12 @@ const CartDrawer = () => {
     });
   }, []);
 
-  // Shipping temporarily disabled for testing
-  const shippingFee: number = 0;
+  const shippingFee: number = (() => {
+    const fee = shippingSettings.shipping_fee;
+    if (fee === 0) return 0;
+    if (shippingSettings.free_shipping_enabled && totalPrice() >= shippingSettings.free_shipping_threshold) return 0;
+    return Math.min(Math.max(fee, 0), 50);
+  })();
 
   const grandTotal = totalPrice() + shippingFee;
 
@@ -346,10 +350,10 @@ const CartDrawer = () => {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground flex items-center gap-1"><Truck className="w-3 h-3" /> Shipping</span>
-                      <span>{shippingFee === 0 ? <span className="text-green-500">Free</span> : `$${shippingFee.toFixed(2)}`}</span>
+                      <span>{shippingFee === 0 ? <span className="text-primary font-medium">Free Shipping</span> : `$${shippingFee.toFixed(2)}`}</span>
                     </div>
-                    {shippingFee === 0 && !shippingSettings.free_shipping_enabled && (
-                      <p className="text-[10px] text-green-500">Free shipping on orders over ${shippingSettings.free_shipping_threshold}</p>
+                    {shippingFee === 0 && shippingSettings.free_shipping_enabled && totalPrice() >= shippingSettings.free_shipping_threshold && (
+                      <p className="text-[10px] text-primary">🎉 You qualify for free shipping!</p>
                     )}
                     <div className="flex justify-between">
                       <span className="font-semibold">Total</span>
