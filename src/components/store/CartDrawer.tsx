@@ -20,7 +20,7 @@ interface ShippingSettings {
 }
 
 const DEFAULT_SHIPPING: ShippingSettings = {
-  shipping_fee: 5.99,
+  shipping_fee: 0,
   free_shipping_enabled: false,
   free_shipping_threshold: 50,
 };
