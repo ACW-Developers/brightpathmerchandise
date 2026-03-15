@@ -46,7 +46,7 @@ const SettingsPage = () => {
             paypal_email: (data as any).paypal_email || "",
             venmo_handle: (data as any).venmo_handle || "",
             accent_color: (data as any).accent_color || "#38bdf8",
-            shipping_fee: String((data as any).shipping_fee ?? 5.99),
+            shipping_fee: String((data as any).shipping_fee ?? 0),
             free_shipping_enabled: (data as any).free_shipping_enabled ?? false,
             free_shipping_threshold: String((data as any).free_shipping_threshold ?? 50),
           });
