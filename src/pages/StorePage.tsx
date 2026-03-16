@@ -9,6 +9,7 @@ import WhatsAppWidget from "@/components/WhatsAppWidget";
 import PageLoadingScreen from "@/components/PageLoadingScreen";
 import { useProducts, useFeaturedProducts, useSaleProducts, useCategories } from "@/hooks/useProducts";
 import ProductFetchError from "@/components/store/ProductFetchError";
+import ClearCacheButton from "@/components/store/ClearCacheButton";
 import { Sparkles, Flame, ShoppingBag, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
