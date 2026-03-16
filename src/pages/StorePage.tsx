@@ -127,6 +127,8 @@ const StorePage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {Array.from({ length: 8 }).map((_, i) => <div key={i} className="glass-card h-80 animate-pulse" />)}
                 </div>
+              ) : isError ? (
+                <ProductFetchError />
               ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-20">
                   <ShoppingBag className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
