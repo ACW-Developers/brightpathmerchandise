@@ -8,6 +8,7 @@ import MarketingBanner from "@/components/store/MarketingBanner";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
 import PageLoadingScreen from "@/components/PageLoadingScreen";
 import { useProducts } from "@/hooks/useProducts";
+import ProductFetchError from "@/components/store/ProductFetchError";
 import { ShoppingBag, Search, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +25,7 @@ const ShopPage = () => {
     onSale: false,
   });
 
-  const { data: products = [], isLoading } = useProducts(filters.category);
+  const { data: products = [], isLoading, isError } = useProducts(filters.category);
 
   useEffect(() => {
     const timer = setTimeout(() => setPageLoading(false), 1200);
@@ -95,6 +96,8 @@ const ShopPage = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     {Array.from({ length: 6 }).map((_, i) => <div key={i} className="glass-card h-80 animate-pulse" />)}
                   </div>
+                ) : isError ? (
+                  <ProductFetchError />
                 ) : filtered.length === 0 ? (
                   <div className="text-center py-20">
                     <ShoppingBag className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />

@@ -8,6 +8,7 @@ import MarketingBanner from "@/components/store/MarketingBanner";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
 import PageLoadingScreen from "@/components/PageLoadingScreen";
 import { useProducts, useFeaturedProducts, useSaleProducts, useCategories } from "@/hooks/useProducts";
+import ProductFetchError from "@/components/store/ProductFetchError";
 import { Sparkles, Flame, ShoppingBag, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +17,7 @@ const StorePage = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: products = [], isLoading } = useProducts(selectedCategory);
+  const { data: products = [], isLoading, isError } = useProducts(selectedCategory);
   const { data: featured = [] } = useFeaturedProducts();
   const { data: saleProducts = [] } = useSaleProducts();
   const { data: categories = ["All"] } = useCategories();
@@ -126,6 +127,8 @@ const StorePage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {Array.from({ length: 8 }).map((_, i) => <div key={i} className="glass-card h-80 animate-pulse" />)}
                 </div>
+              ) : isError ? (
+                <ProductFetchError />
               ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-20">
                   <ShoppingBag className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
