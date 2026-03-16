@@ -23,7 +23,7 @@ export function useProducts(category?: string) {
         .select('*', { head: false, count: undefined })
         .order('created_at', { ascending: false });
       if (category && category !== 'All') query = query.eq('category', category);
-      const { data, error } = await query.abortSignal(undefined as any).throwOnError();
+      const { data, error } = await query;
       if (error) { console.error('[useProducts] fetch error:', error); throw error; }
       if (!data || data.length === 0) console.warn('[useProducts] No products returned for category:', category);
       return (data || []).map(mapProduct);
