@@ -25,7 +25,7 @@ const ShopPage = () => {
     onSale: false,
   });
 
-  const { data: products = [], isLoading } = useProducts(filters.category);
+  const { data: products = [], isLoading, isError } = useProducts(filters.category);
 
   useEffect(() => {
     const timer = setTimeout(() => setPageLoading(false), 1200);
