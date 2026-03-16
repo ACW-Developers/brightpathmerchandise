@@ -67,9 +67,12 @@ const ShopPage = () => {
                 <h1 className="text-3xl md:text-4xl font-bold font-space">Shop</h1>
                 <span className="text-sm text-muted-foreground ml-2">{filtered.length} products</span>
               </div>
-              <Button variant="outline" size="sm" className="lg:hidden gap-1" onClick={() => setSidebarOpen(true)}>
-                <SlidersHorizontal className="w-4 h-4" /> Filters
-              </Button>
+              <div className="flex items-center gap-2">
+                <ClearCacheButton />
+                <Button variant="outline" size="sm" className="lg:hidden gap-1" onClick={() => setSidebarOpen(true)}>
+                  <SlidersHorizontal className="w-4 h-4" /> Filters
+                </Button>
+              </div>
             </div>
 
             <MarketingBanner position="shop-top" className="mb-8" />
