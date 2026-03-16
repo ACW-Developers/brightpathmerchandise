@@ -17,7 +17,7 @@ const StorePage = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: products = [], isLoading } = useProducts(selectedCategory);
+  const { data: products = [], isLoading, isError } = useProducts(selectedCategory);
   const { data: featured = [] } = useFeaturedProducts();
   const { data: saleProducts = [] } = useSaleProducts();
   const { data: categories = ["All"] } = useCategories();
