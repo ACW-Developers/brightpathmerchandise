@@ -105,9 +105,12 @@ const StorePage = () => {
 
           <section className="py-16 px-6" id="products">
             <div className="max-w-7xl mx-auto">
-              <div className="flex items-center gap-3 mb-8">
-                <ShoppingBag className="w-6 h-6 text-primary" />
-                <h2 className="text-3xl font-bold font-space">All Products</h2>
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <ShoppingBag className="w-6 h-6 text-primary" />
+                  <h2 className="text-3xl font-bold font-space">All Products</h2>
+                </div>
+                <ClearCacheButton />
               </div>
 
               <div className="flex flex-col md:flex-row gap-4 mb-8">
